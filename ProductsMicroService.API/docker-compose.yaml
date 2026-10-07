@@ -1,4 +1,5 @@
 ﻿services:
+
   mysql-container:
     image: mysql:latest
 
@@ -11,24 +12,56 @@
     volumes:
       - ./mysql-init:/docker-entrypoint-initdb.d
 
-    hostname: mysql-host-productsmicroservice
-
     networks:
-      - products-microservice-network
+      - ecommerce-network
+
 
   products-microservice:
     image: anirudh231812/ecommerce-products-microservice:v1.0
 
     environment:
-      MYSQL_HOST: mysql-host-productsmicroservice
+      MYSQL_HOST: mysql-container
       MYSQL_PASSWORD: admin
 
     ports:
       - "8080:8080"
 
     networks:
-      - products-microservice-network
+      - ecommerce-network
+
+
+  postgres-container:
+    image: postgres:latest
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: ecommerceusers
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - ./postgres-init:/docker-entrypoint-initdb.d
+
+    networks:
+      - ecommerce-network
+
+
+  users-microservice:
+    image: anirudh231812/ecommerce-users-microservice:v1.0
+
+    environment:
+      POSTGRES_HOST: postgres-container
+      POSTGRES_PASSWORD: admin
+
+    ports:
+      - "9090:9090"
+
+    networks:
+      - ecommerce-network
+
 
 networks:
-  products-microservice-network:
+  ecommerce-network:
     driver: bridge
