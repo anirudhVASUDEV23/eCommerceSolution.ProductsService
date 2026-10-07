@@ -14,13 +14,18 @@ namespace DataAccessLayer
             // Register your data access layer services here
             // Example:
             // services.AddScoped<IYourRepository, YourRepository>();
+
+            string connectionStringTemplate = configuration.GetConnectionString("DefaultConnection")!;
+            string connectionString= connectionStringTemplate.Replace("$MYSQL_HOST",Environment.GetEnvironmentVariable("MYSQL_HOST"))
+            .Replace("$MYSQL_PASSWORD",Environment.GetEnvironmentVariable("MYSQL_PASSWORD"));
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 // Configure your database provider and connection string here
                 // Example for SQL Server:
                 // options.UseSqlServer("YourConnectionString");
-
-                options.UseMySQL(configuration.GetConnectionString("DefaultConnection")!);
+                
+                options.UseMySQL(connectionString);
             });
             services.AddScoped<IProductsRepository, ProductsRepository>();
             return services;

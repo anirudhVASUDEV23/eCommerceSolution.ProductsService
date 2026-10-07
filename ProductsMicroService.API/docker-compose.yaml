@@ -1,0 +1,34 @@
+﻿services:
+  mysql-container:
+    image: mysql:latest
+
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+
+    hostname: mysql-host-productsmicroservice
+
+    networks:
+      - products-microservice-network
+
+  products-microservice:
+    image: anirudh231812/ecommerce-products-microservice:v1.0
+
+    environment:
+      MYSQL_HOST: mysql-host-productsmicroservice
+      MYSQL_PASSWORD: admin
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - products-microservice-network
+
+networks:
+  products-microservice-network:
+    driver: bridge
