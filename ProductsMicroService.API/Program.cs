@@ -50,7 +50,10 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 //Auth
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 
